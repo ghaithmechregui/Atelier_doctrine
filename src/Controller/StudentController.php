@@ -2,13 +2,18 @@
 
 namespace App\Controller;
 
+use App\Entity\Classroom;
 use App\Entity\Student;
+use App\Form\SearchStudentByClassType;
+use App\Form\SearchStudentType;
 use App\Form\StudentType;
+use App\Repository\StudentRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use DateTime;
 
 class StudentController extends AbstractController
 {
@@ -27,7 +32,58 @@ class StudentController extends AbstractController
     public function listStudent()
     {
         $students = $this->getDoctrine()->getRepository(Student::class)->findAll();
-        return $this->render('student/list.html.twig', array("students" => $students));
+        return $this->render('student/list.html.twig', ["students" => $students]);
+    }
+
+    ////Question1&question2
+    /**
+     * @Route("/listStudentWithSearch", name="listStudentWithSearch")
+     */
+    public function listStudentWithSearch(Request $request, StudentRepository $repository)
+    {
+        //All of Student
+        $students = $repository->findAll();
+        //list of students order By Mail
+        $studentsByMail = $repository->orderByMail();
+        //search
+        $searchForm = $this->createForm(SearchStudentType::class);
+        $searchForm->add("Recherche",SubmitType::class);
+        $searchForm->handleRequest($request);
+        if ($searchForm->isSubmitted()) {
+            $nsc = $searchForm['nsc']->getData();
+            $resultOfSearch = $repository->searchStudent($nsc);
+            return $this->render('student/searchStudent.html.twig', array(
+                "resultOfSearch" => $resultOfSearch,
+                "searchStudent" => $searchForm->createView()));
+        }
+        return $this->render('student/listWithSearch.html.twig', array(
+            "students" => $students,
+            "studentsByMail" => $studentsByMail,
+            "searchStudent" => $searchForm->createView()));
+    }
+    /////Question4
+    /**
+     * @Route("/listStudentByDate", name="listStudentByDate")
+     */
+    public function listStudentByDate()
+    {
+
+        $studentsByDate= $this->getDoctrine()->getRepository(Student::class)->orderByDate();
+        return $this->render('student/listByDate.html.twig', [
+            "studentByDate"=>$studentsByDate,
+           ]);
+    }
+
+    /**
+     * @Route("/listStudentEnabled", name="listStudentEnabled")
+     */
+    public function listStudentEnabled()
+    {
+
+        $studentsByEnabled= $this->getDoctrine()->getRepository(Student::class)->findEnabledStudent();
+        return $this->render('student/listStudentsEnabled.html.twig', [
+            "studentsByEnabled"=>$studentsByEnabled,
+        ]);
     }
     /**
      * @Route("/addStudent", name="addStudent")
@@ -83,6 +139,54 @@ class StudentController extends AbstractController
             return $this->redirectToRoute('listStudent');
         }
         return $this->render("student/update.html.twig", array('form' => $form->createView()));
+    }
+
+    ////Question1 -DQL
+    /**
+     * @Route("/listStudentWithSearchDate", name="listStudentWithSearchDate")
+     */
+    public function listStudentWithSearchDate()
+    {
+        $repository = $this->getDoctrine()->getRepository(Student::class);
+        //Show all students
+        $students = $repository->studentsPerDateofBirth(new DateTime('2000-11-02'),new DateTime('2002-11-02'));
+        return $this->render('student/listWithSearchDate.html.twig', ['students' => $students]);
+    }
+
+    //Question 3 -DQL
+    /**
+     * @Route("/searchStudentByAVG", name="searchStudentByAVG")
+     */
+    public function searchStudentByAVG(Request $request){
+        $repository = $this->getDoctrine()->getRepository(Student::class);
+        //Show all students
+        $students = $repository->findAll();
+        //Formulaire de recherche
+        $searchForm = $this->createForm(SearchStudentByClassType::class);
+        $searchForm->add('Search',SubmitType::class);
+        $searchForm->handleRequest($request);
+        if ($searchForm->isSubmitted()) {
+            $minMoy=$searchForm['minMoy']->getData();
+            $maxMoy=$searchForm['maxMoy']->getData();
+            $resultOfSearch = $repository->findStudentByAVG($minMoy,$maxMoy);
+            return $this->render('student/searchStudentByAVG.html.twig', [
+                'students' => $resultOfSearch,
+                'searchStudent' => $searchForm->createView()]);
+        }
+        return $this->render('student/searchStudentByAVG.html.twig', ['students' => $students,'searchStudent'=>$searchForm->createView()]);
+
+    }
+
+    //Question 4-DQL
+    /**
+     * @Route("/listStudentDontAdmitted", name="listStudentDontAdmitted")
+     */
+    public function listStudentDontAdmitted()
+    {
+        $students= $this->getDoctrine()->getRepository(Student::class)->findStudentDontAdmitted();
+        return $this->render('student/list.html.twig', [
+            "students"=>$students,
+        ]);
     }
 
 }

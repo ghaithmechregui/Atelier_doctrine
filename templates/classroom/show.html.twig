@@ -13,9 +13,9 @@
             <td>{{ student.nsc }}</td>
             <td>{{ student.email }}</td>
             <td>{{ student.classroom }}</td>
-            <td><a href="{{ path('updateStudent',{'id':student.nsc}) }}">Update</a>
-                <a href="{{ path('deleteStudent',{'id':student.nsc}) }}">Delete</a>
-                <a href="{{ path('showStudent',{'id':student.nsc}) }}">Show</a></td>
+            <td><a href="{{ path('updateStudent',{'nsc':student.nsc}) }}">Update</a>
+                <a href="{{ path('deleteStudent',{'nsc':student.nsc}) }}">Delete</a>
+                <a href="{{ path('showStudent',{'nsc':student.nsc}) }}">Show</a></td>
         </tr>
     {% endfor %}
 </table>

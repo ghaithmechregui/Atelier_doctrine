@@ -14,6 +14,9 @@ class StudentType extends AbstractType
         $builder
             ->add('nsc')
             ->add('email')
+            ->add('creationDate')
+            ->add('DateOfBirth')
+            ->add('enabled')
             ->add('classroom')
         ;
     }

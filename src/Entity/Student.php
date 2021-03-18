@@ -25,6 +25,7 @@ class Student
      */
     private $email;
 
+
     /**
      * @ORM\ManyToOne(targetEntity=Classroom::class, inversedBy="students")
      * @ORM\JoinColumn(nullable=false)
@@ -40,6 +41,26 @@ class Student
      *      )
      */
     private $clubs;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $creationDate;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $DateOfBirth;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $enabled;
+
+    /**
+     * @ORM\Column(type="float")
+     */
+    private $moyenne;
 
     public function __construct()
     {
@@ -110,6 +131,54 @@ class Student
         if ($this->clubs->removeElement($club)) {
             $club->removeStudent($this);
         }
+
+        return $this;
+    }
+
+    public function getCreationDate(): ?\DateTimeInterface
+    {
+        return $this->creationDate;
+    }
+
+    public function setCreationDate(\DateTimeInterface $creationDate): self
+    {
+        $this->creationDate = $creationDate;
+
+        return $this;
+    }
+
+    public function getDateOfBirth(): ?\DateTimeInterface
+    {
+        return $this->DateOfBirth;
+    }
+
+    public function setDateOfBirth(\DateTimeInterface $DateOfBirth): self
+    {
+        $this->DateOfBirth = $DateOfBirth;
+
+        return $this;
+    }
+
+    public function getEnabled(): ?bool
+    {
+        return $this->enabled;
+    }
+
+    public function setEnabled(bool $enabled): self
+    {
+        $this->enabled = $enabled;
+
+        return $this;
+    }
+
+    public function getMoyenne(): ?float
+    {
+        return $this->moyenne;
+    }
+
+    public function setMoyenne(float $moyenne): self
+    {
+        $this->moyenne = $moyenne;
 
         return $this;
     }

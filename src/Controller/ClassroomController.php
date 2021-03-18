@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Classroom;
+use App\Entity\Student;
 use App\Form\ClassroomType;
+use App\Form\SearchStudentByClassType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,7 +25,7 @@ class ClassroomController extends AbstractController
     }
 
     /**
-     * @Route("/list", name="listClassroom")
+     * @Route("/listClassroom", name="listClassroom")
      */
     public function listClassroom()
     {
@@ -32,7 +34,7 @@ class ClassroomController extends AbstractController
     }
 
     /**
-     * @Route("/delete/{id}", name="deleteClassroom")
+     * @Route("/deleteClassroom/{id}", name="deleteClassroom")
      */
     public function deleteClassroom($id)
     {
@@ -44,7 +46,7 @@ class ClassroomController extends AbstractController
     }
 
     /**
-     * @Route("/add", name="addClassroom")
+     * @Route("/addClassroom", name="addClassroom")
      */
     public function addClassroom(Request $request)
     {
@@ -62,7 +64,7 @@ class ClassroomController extends AbstractController
     }
 
     /**
-     * @Route("/update/{id}", name="updateClassroom")
+     * @Route("/updateClassroom/{id}", name="updateClassroom")
      */
     public function updateClassroom(Request $request,$id)
     {
@@ -77,5 +79,31 @@ class ClassroomController extends AbstractController
         }
         return $this->render("classroom/update.html.twig",array('form'=>$form->createView()));
     }
+
+    //Question2
+    /**
+     * @Route("/showClassroom/{id}", name="showClassroom")
+     */
+    public function showClassroom($id)
+    {
+        $classroom = $this->getDoctrine()->getRepository(Classroom::class)->find($id);
+        $students= $this->getDoctrine()->getRepository(Student::class)->listStudentByClass($classroom->getId());
+        return $this->render('classroom/show.html.twig', [
+            "classroom" => $classroom,
+            "students"=>$students]);
+    }
+
+    //Question 2-DQL
+    /**
+     * @Route("/showClassroomAVG/{id}", name="showClassroomAVG")
+     */
+    public function showClassroomAVG($id)
+    {   $classroom = $this->getDoctrine()->getRepository(Classroom::class)->find($id);
+        $moyenne= $this->getDoctrine()->getRepository(Classroom::class)->findStudentByClassAVG($classroom->getName());
+        return $this->render('classroom/showAVG.html.twig', [
+            "classroom" => $classroom,
+            "moyenne"=>$moyenne]);
+    }
+
 
 }

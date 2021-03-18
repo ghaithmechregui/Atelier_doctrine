@@ -1,7 +1,9 @@
+
 <table border="1">
     <tr>
         <td>NSC</td>
         <td>Email</td>
+        <td>Mean</td>
         <td>Classe</td>
         <td>Action</td>
     </tr>
@@ -9,6 +11,7 @@
         <tr>
             <td>{{ student.nsc }}</td>
             <td>{{ student.email }}</td>
+            <td>{{ student.moyenne }}</td>
             <td>{{ student.classroom }}</td>
             <td><a href="{{ path('updateStudent',{'nsc':student.nsc}) }}">Update</a>
             <a href="{{ path('deleteStudent',{'nsc':student.nsc}) }}">Delete</a>
@@ -17,3 +20,4 @@
     {% endfor %}
 </table>
 <a href="{{ path('addStudent') }}">Add Student</a>
+
